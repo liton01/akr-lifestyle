@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* AKR Lifestyle design tokens */
+@theme {
+  --color-ink: #171717;
+  --color-ink-soft: #2a2a2a;
+  --color-gold: #c6a66b;
+  --color-gold-dark: #a88a50;
+  --color-gold-deep: #7d6535;
+  --color-gold-light: #e8d6ae;
+  --color-ivory: #f6f1e7;
+  --color-ivory-dark: #ebe3d3;
+  --color-charcoal: #424242;
+  --color-muted: #6b6b6b;
+  --color-line: #e3dccd;
+  --color-success: #2f7d4f;
+  --color-warning: #a8670f;
+  --color-danger: #b42318;
+  --color-info: #2c5d8f;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
+
+  --radius-card: 0.875rem;
+  --shadow-card: 0 1px 2px rgb(23 23 23 / 0.04), 0 8px 24px -12px rgb(23 23 23 / 0.12);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-white font-sans text-ink antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold-dark);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-gold-light);
+    color: var(--color-ink);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark;
+  }
+  .card {
+    @apply rounded-[var(--radius-card)] border border-line bg-white shadow-[var(--shadow-card)];
+  }
+  .link {
+    @apply font-medium text-ink underline decoration-gold decoration-2 underline-offset-4 hover:text-gold-deep;
+  }
+  .prose-akr {
+    @apply max-w-none text-[15px] leading-7 text-charcoal;
+  }
+  .prose-akr h2 {
+    @apply mt-8 mb-3 font-display text-2xl font-semibold text-ink;
+  }
+  .prose-akr h3 {
+    @apply mt-6 mb-2 font-display text-xl font-semibold text-ink;
+  }
+  .prose-akr p {
+    @apply mb-4;
+  }
+  .prose-akr ul {
+    @apply mb-4 list-disc space-y-1 pl-6 marker:text-gold-dark;
+  }
+  .prose-akr strong {
+    @apply font-semibold text-ink;
+  }
+  .skeleton {
+    @apply animate-pulse rounded-md bg-ivory-dark/70;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
