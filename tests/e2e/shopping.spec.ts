@@ -67,6 +67,30 @@ test("search suggests products while typing and filters the results page live", 
   await expect(page.getByText("No products match “zzqqxx”.")).toBeVisible();
 });
 
+test("homepage hero slider shows admin banners and can be paused and navigated", async ({ page }) => {
+  await page.goto("/");
+  const hero = page.getByRole("region", { name: "Featured collections" });
+  // Hidden slides are aria-hidden, so only the active slide's heading is in the accessibility tree.
+  const title = hero.getByRole("heading", { level: 2 });
+
+  await hero.getByRole("button", { name: "Pause slideshow" }).click();
+  await expect(hero.getByRole("button", { name: "Play slideshow" })).toBeVisible();
+  await expect(title).toHaveText("Time, refined");
+  await expect(hero.getByRole("link", { name: "View offers" })).toBeVisible();
+
+  await hero.getByRole("button", { name: "Next slide" }).click();
+  await expect(title).toHaveText("Jewellery to treasure");
+
+  await hero.getByRole("button", { name: /^Go to slide 3/ }).click();
+  await expect(title).toHaveText("Smart gadgets, everyday ease");
+
+  await page.keyboard.press("ArrowRight");
+  await expect(title).toHaveText("Time, refined");
+
+  await hero.getByRole("link", { name: "Shop watches" }).click();
+  await page.waitForURL("**/category/watches");
+});
+
 test("server rejects invalid checkout input and keeps what the customer typed", async ({ page }) => {
   await page.goto("/product/voltix-braided-usb-c-cable-2m");
   await page.getByRole("button", { name: "Add to cart" }).click();

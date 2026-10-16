@@ -1,6 +1,7 @@
 import { ArrowRight, BadgeCheck, Banknote, RotateCcw, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { HeroSlider } from "@/components/store/hero-slider";
 import { ProductGrid } from "@/components/store/product-card";
 import { ButtonLink } from "@/components/ui/button";
 import { getActiveBrands, getCategoryIndex, getSettings } from "@/server/cache";
@@ -13,18 +14,41 @@ const TRUST_ICONS = [BadgeCheck, Truck, Banknote, RotateCcw];
 
 export default async function HomePage() {
   const [settings, categories, brands, ctx] = await Promise.all([getSettings(), getCategoryIndex(), getActiveBrands(), loadPricingContext(prisma)]);
-  const [featured, newArrivals, bestSellers, promoBanners, stripBanners] = await Promise.all([
+  const [featured, newArrivals, bestSellers, promoBanners, stripBanners, heroSlides] = await Promise.all([
     getProductCards(prisma, { isFeatured: true }, 8, [{ updatedAt: "desc" }], ctx),
     getProductCards(prisma, { isNewArrival: true }, 8, [{ publishedAt: { sort: "desc", nulls: "last" } }], ctx),
     getProductCards(prisma, {}, 8, [{ isBestSeller: "desc" }, { soldCount: "desc" }], ctx),
     getActiveBanners(prisma, "HOME_PROMO"),
     getActiveBanners(prisma, "HOME_STRIP"),
+    getActiveBanners(prisma, "HOME_HERO"),
   ]);
   const { homepage } = settings;
   const topCategories = categories.childrenOf(null).filter((c) => c.isActive);
 
   return (
     <>
+      {heroSlides.length ? (
+        <>
+          <h1 className="sr-only">
+            {settings.general.storeName} — {settings.general.slogan}
+          </h1>
+          <HeroSlider
+            slides={heroSlides.map((b) => ({
+              id: b.id,
+              eyebrow: b.eyebrow,
+              title: b.title,
+              subtitle: b.subtitle,
+              imageUrl: b.imageUrl,
+              mobileImageUrl: b.mobileImageUrl,
+              linkUrl: b.linkUrl,
+              ctaLabel: b.ctaLabel,
+              secondaryCtaLabel: b.secondaryCtaLabel,
+              secondaryLinkUrl: b.secondaryLinkUrl,
+              textTone: b.textTone,
+            }))}
+          />
+        </>
+      ) : (
       <section className="relative overflow-hidden bg-ink text-ivory">
         <div className="container-page grid items-center gap-10 py-14 md:grid-cols-2 md:py-20 lg:py-28">
           <div className="relative z-10">
@@ -60,6 +84,7 @@ export default async function HomePage() {
           ) : null}
         </div>
       </section>
+      )}
 
       {homepage.trustPoints.length ? (
         <section aria-label="Why shop with us" className="border-b border-line bg-ivory/60">

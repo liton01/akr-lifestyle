@@ -217,12 +217,16 @@ export function CouponForm({ initial, products, categories }: { initial: CouponV
 
 export type BannerValues = {
   id: string | null;
+  eyebrow: string;
   title: string;
   subtitle: string;
   imageUrl: string;
   mobileImageUrl: string;
   linkUrl: string;
   ctaLabel: string;
+  secondaryCtaLabel: string;
+  secondaryLinkUrl: string;
+  textTone: "LIGHT" | "DARK";
   placement: "HOME_HERO" | "HOME_PROMO" | "HOME_STRIP" | "OFFERS_PAGE";
   sortOrder: number;
   isActive: boolean;
@@ -232,6 +236,8 @@ export type BannerValues = {
 
 export function BannerForm({ initial }: { initial: BannerValues }) {
   const { state, pending, formProps } = useActionForm<ActionResult>(saveBannerAction);
+  const [placement, setPlacement] = useState(initial.placement);
+  const isHero = placement === "HOME_HERO";
   const errors = state && !state.ok ? state.fieldErrors : undefined;
   return (
     <form {...formProps} className="space-y-5" noValidate>
@@ -243,7 +249,7 @@ export function BannerForm({ initial }: { initial: BannerValues }) {
         </Field>
         <Field label="Placement" name="placement" errors={errors?.placement}>
           {(p) => (
-            <Select {...p} defaultValue={initial.placement}>
+            <Select {...p} value={placement} onChange={(e) => setPlacement(e.target.value as BannerValues["placement"])}>
               {Object.entries(BANNER_PLACEMENT_LABELS).map(([value, label]) => (
                 <option key={value} value={value}>
                   {label}
@@ -252,14 +258,31 @@ export function BannerForm({ initial }: { initial: BannerValues }) {
             </Select>
           )}
         </Field>
+        <Field label="Small label above the title" name="eyebrow" hint={isHero ? "e.g. New season · Up to 20% off" : "Optional"} errors={errors?.eyebrow}>
+          {(p) => <Input {...p} maxLength={60} defaultValue={initial.eyebrow} />}
+        </Field>
+        <Field label="Text colour" name="textTone" hint="Choose the one that reads clearly on your image." errors={errors?.textTone}>
+          {(p) => (
+            <Select {...p} defaultValue={initial.textTone}>
+              <option value="LIGHT">Light text (for dark images)</option>
+              <option value="DARK">Dark text (for light images)</option>
+            </Select>
+          )}
+        </Field>
         <Field label="Subtitle" name="subtitle" errors={errors?.subtitle} className="sm:col-span-2">
           {(p) => <Input {...p} defaultValue={initial.subtitle} />}
         </Field>
-        <Field label="Link" name="linkUrl" hint="e.g. /category/watches" errors={errors?.linkUrl}>
+        <Field label="Button label" name="ctaLabel" hint="e.g. Shop now" errors={errors?.ctaLabel}>
+          {(p) => <Input {...p} defaultValue={initial.ctaLabel} />}
+        </Field>
+        <Field label="Button link" name="linkUrl" hint="e.g. /category/watches" errors={errors?.linkUrl}>
           {(p) => <Input {...p} defaultValue={initial.linkUrl} />}
         </Field>
-        <Field label="Button label" name="ctaLabel" errors={errors?.ctaLabel}>
-          {(p) => <Input {...p} defaultValue={initial.ctaLabel} />}
+        <Field label="Second button label" name="secondaryCtaLabel" hint="Optional, e.g. View offers" errors={errors?.secondaryCtaLabel}>
+          {(p) => <Input {...p} defaultValue={initial.secondaryCtaLabel} />}
+        </Field>
+        <Field label="Second button link" name="secondaryLinkUrl" errors={errors?.secondaryLinkUrl}>
+          {(p) => <Input {...p} defaultValue={initial.secondaryLinkUrl} />}
         </Field>
         <Field label="Display order" name="sortOrder" errors={errors?.sortOrder}>
           {(p) => <Input {...p} type="number" defaultValue={initial.sortOrder} />}
@@ -267,10 +290,22 @@ export function BannerForm({ initial }: { initial: BannerValues }) {
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <SingleImageField name="imageUrl" label="Image" defaultValue={initial.imageUrl} folder="banners" hint="Wide images (e.g. 2400×800) for strips, 1200×900 for tiles." />
+          <SingleImageField
+            name="imageUrl"
+            label={isHero ? "Slide image (desktop)" : "Image"}
+            defaultValue={initial.imageUrl}
+            folder="banners"
+            hint={isHero ? "2400×1100 px or wider. Keep the subject on the right — the text sits on the left." : "Wide images (e.g. 2400×800) for strips, 1200×900 for tiles."}
+          />
           <FieldError messages={errors?.imageUrl} />
         </div>
-        <SingleImageField name="mobileImageUrl" label="Mobile image (optional)" defaultValue={initial.mobileImageUrl} folder="banners" />
+        <SingleImageField
+          name="mobileImageUrl"
+          label="Mobile image (optional)"
+          defaultValue={initial.mobileImageUrl}
+          folder="banners"
+          hint={isHero ? "Portrait, about 1080×1350 px, subject in the upper half." : undefined}
+        />
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <DateTimeField name="startsAt" label="Show from" defaultValue={initial.startsAt} errors={errors?.startsAt} />

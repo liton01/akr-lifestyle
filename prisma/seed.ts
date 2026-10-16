@@ -949,6 +949,52 @@ async function seedBanners() {
   });
 }
 
+/** Homepage hero slider (HOME_HERO banners). Added once; edit them in Admin → Banners. */
+async function seedHeroSlides() {
+  if ((await db.banner.count({ where: { placement: "HOME_HERO" } })) > 0) return 0;
+  const slides = [
+    {
+      variant: "hero" as const,
+      eyebrow: "New season collection",
+      title: "Time, refined",
+      subtitle: "Automatic, dress and smart watches — 100% authentic, with warranty and delivery across Bangladesh.",
+      ctaLabel: "Shop watches",
+      linkUrl: "/category/watches",
+      secondaryCtaLabel: "View offers",
+      secondaryLinkUrl: "/offers",
+      textTone: "LIGHT" as const,
+    },
+    {
+      variant: "jewellery" as const,
+      eyebrow: "Festive edit · 10% off",
+      title: "Jewellery to treasure",
+      subtitle: "Rings, necklaces, earrings and bracelets in 18K gold plating — gift-boxed for every occasion.",
+      ctaLabel: "Shop jewellery",
+      linkUrl: "/category/jewellery",
+      secondaryCtaLabel: null,
+      secondaryLinkUrl: null,
+      textTone: "DARK" as const,
+    },
+    {
+      variant: "gadgets" as const,
+      eyebrow: "Power on the go",
+      title: "Smart gadgets, everyday ease",
+      subtitle: "Fast chargers, power banks, earbuds and accessories that keep up with you.",
+      ctaLabel: "Shop gadgets",
+      linkUrl: "/category/gadgets",
+      secondaryCtaLabel: "New arrivals",
+      secondaryLinkUrl: "/shop?sort=newest",
+      textTone: "LIGHT" as const,
+    },
+  ];
+  for (const [index, slide] of slides.entries()) {
+    const image = await upload(bannerArt(2400, 1100, slide.variant), "banners", 2400, 1100);
+    const { variant: _variant, ...data } = slide;
+    await db.banner.create({ data: { ...data, imageUrl: image.url, placement: "HOME_HERO", sortOrder: index * 10 } });
+  }
+  return slides.length;
+}
+
 async function main() {
   console.log("Seeding AKR Lifestyle development data…");
 
@@ -986,6 +1032,9 @@ async function main() {
 
   await seedBanners();
   console.log("• Banners");
+
+  const heroSlides = await seedHeroSlides();
+  console.log(`• Homepage hero slides (${heroSlides} created)`);
 
   console.log("Seed complete.");
 }

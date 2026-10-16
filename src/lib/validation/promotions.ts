@@ -82,12 +82,16 @@ export type CouponInput = z.infer<typeof couponInputSchema>;
 
 export const bannerInputSchema = z
   .object({
+    eyebrow: optionalTextSchema(60),
     title: z.string().trim().min(2, "Title is required.").max(120),
     subtitle: optionalTextSchema(300),
     imageUrl: linkSchema.refine((v) => v !== "", "Upload or enter an image."),
     mobileImageUrl: linkSchema.optional().default(""),
     linkUrl: linkSchema.optional().default(""),
     ctaLabel: optionalTextSchema(40),
+    secondaryCtaLabel: optionalTextSchema(40),
+    secondaryLinkUrl: linkSchema.optional().default(""),
+    textTone: z.enum(["LIGHT", "DARK"]).default("LIGHT"),
     placement: z.enum(["HOME_HERO", "HOME_PROMO", "HOME_STRIP", "OFFERS_PAGE"]),
     sortOrder: intSchema(-10_000, 10_000),
     isActive: checkboxSchema,
@@ -96,6 +100,7 @@ export const bannerInputSchema = z
   })
   .superRefine((b, ctx) => {
     if (b.startsAt && b.endsAt && b.endsAt <= b.startsAt) ctx.addIssue({ code: "custom", path: ["endsAt"], message: "End must be after start." });
+    if (b.secondaryCtaLabel && !b.secondaryLinkUrl) ctx.addIssue({ code: "custom", path: ["secondaryLinkUrl"], message: "Add a link for the second button." });
   });
 export type BannerInput = z.infer<typeof bannerInputSchema>;
 

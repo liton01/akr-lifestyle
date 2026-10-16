@@ -14,19 +14,23 @@ export default async function BannerEditPage({ params }: PageProps<"/admin/banne
   const initial: BannerValues = banner
     ? {
         id: banner.id,
+        eyebrow: banner.eyebrow ?? "",
         title: banner.title,
         subtitle: banner.subtitle ?? "",
         imageUrl: banner.imageUrl,
         mobileImageUrl: banner.mobileImageUrl ?? "",
         linkUrl: banner.linkUrl ?? "",
         ctaLabel: banner.ctaLabel ?? "",
+        secondaryCtaLabel: banner.secondaryCtaLabel ?? "",
+        secondaryLinkUrl: banner.secondaryLinkUrl ?? "",
+        textTone: banner.textTone,
         placement: banner.placement,
         sortOrder: banner.sortOrder,
         isActive: banner.isActive,
         startsAt: banner.startsAt?.toISOString() ?? null,
         endsAt: banner.endsAt?.toISOString() ?? null,
       }
-    : { id: null, title: "", subtitle: "", imageUrl: "", mobileImageUrl: "", linkUrl: "", ctaLabel: "", placement: "HOME_PROMO", sortOrder: 0, isActive: true, startsAt: null, endsAt: null };
+    : { id: null, eyebrow: "", title: "", subtitle: "", imageUrl: "", mobileImageUrl: "", linkUrl: "", ctaLabel: "", secondaryCtaLabel: "", secondaryLinkUrl: "", textTone: "LIGHT", placement: "HOME_HERO", sortOrder: 0, isActive: true, startsAt: null, endsAt: null };
   return (
     <>
       <AdminPageHeader title={banner ? banner.title : "New banner"} back={{ href: "/admin/banners", label: "Banners" }} />

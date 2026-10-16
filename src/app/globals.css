@@ -93,6 +93,21 @@
   }
 }
 
+/* Hero slider: fills the active dot over the autoplay interval. */
+@keyframes hero-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.hero-progress {
+  animation-name: hero-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
 @media print {
   .no-print {
     display: none !important;

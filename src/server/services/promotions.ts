@@ -125,12 +125,16 @@ export async function saveBanner(db: Db, actor: Actor, id: string | null, raw: u
   assertPermission(actor, "promotion:write");
   const input = bannerInputSchema.parse(raw);
   const data = {
+    eyebrow: input.eyebrow,
     title: input.title,
     subtitle: input.subtitle,
     imageUrl: input.imageUrl,
     mobileImageUrl: input.mobileImageUrl || null,
     linkUrl: input.linkUrl || null,
     ctaLabel: input.ctaLabel,
+    secondaryCtaLabel: input.secondaryCtaLabel,
+    secondaryLinkUrl: input.secondaryLinkUrl || null,
+    textTone: input.textTone,
     placement: input.placement,
     sortOrder: input.sortOrder,
     isActive: input.isActive,
