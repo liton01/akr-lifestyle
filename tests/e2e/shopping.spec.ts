@@ -91,6 +91,28 @@ test("homepage hero slider shows admin banners and can be paused and navigated",
   await page.waitForURL("**/category/watches");
 });
 
+test("category dropdown opens on hover and closes once a sub-category is chosen", async ({ page }) => {
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Main" });
+  const gadgets = nav.getByRole("link", { name: "Gadgets", exact: true });
+
+  await gadgets.hover();
+  await expect(gadgets).toHaveAttribute("aria-expanded", "true");
+  const subCategory = nav.getByRole("link", { name: "Power & Charging" });
+  await subCategory.click();
+
+  await page.waitForURL("**/category/power-charging");
+  await expect(page.getByRole("heading", { name: "Power & Charging", level: 1 })).toBeVisible();
+  // The pointer is still over the menu, but the panel must not stay open over the new page.
+  await expect(subCategory).toBeHidden();
+  await expect(gadgets).toHaveAttribute("aria-expanded", "false");
+
+  await gadgets.focus();
+  await expect(subCategory).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(subCategory).toBeHidden();
+});
+
 test("server rejects invalid checkout input and keeps what the customer typed", async ({ page }) => {
   await page.goto("/product/voltix-braided-usb-c-cable-2m");
   await page.getByRole("button", { name: "Add to cart" }).click();

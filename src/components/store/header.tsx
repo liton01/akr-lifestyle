@@ -1,12 +1,16 @@
-import { ChevronDown, Search, ShoppingBag, User } from "lucide-react";
+import { Package, Phone, Search, ShoppingBag, Sparkles, User } from "lucide-react";
 import Link from "next/link";
 import type { StoreSettings } from "@/lib/settings-schema";
 import { isStaffRole } from "@/lib/permissions";
+import { cn } from "@/lib/utils";
 import type { CurrentUser } from "@/server/auth/session";
 import type { CategoryIndex } from "@/server/services/categories";
-import { AccountMenu, MobileMenu } from "./header-client";
+import { AccountMenu, MobileMenu, StickyHeader } from "./header-client";
+import { HeaderActionIcon, HeaderActionText } from "./header-parts";
 import { Logo } from "./logo";
+import { MainNav } from "./main-nav";
 import { SearchAutocomplete } from "./search-autocomplete";
+import { FacebookIcon, InstagramIcon, LinkedinIcon, TiktokIcon, YoutubeIcon } from "./social-icons";
 
 export type NavCategory = { name: string; slug: string; children: { name: string; slug: string }[] };
 
@@ -35,109 +39,127 @@ export function SiteHeader({
   user: CurrentUser | null;
   cartCount: number;
 }) {
+  const cartLabel = `Shopping cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`;
   return (
-    <header className="sticky top-0 z-40 border-b border-line/80 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
-      <div className="container-page flex h-16 items-center gap-3 lg:h-20">
-        <MobileMenu nav={nav} user={user ? { name: user.name, isStaff: isStaffRole(user.role) } : null} />
+    <StickyHeader>
+      <div className="container-page flex h-[68px] items-center gap-2 sm:gap-3 lg:h-24 lg:gap-8">
+        <MobileMenu
+          nav={nav}
+          user={user ? { name: user.name, isStaff: isStaffRole(user.role) } : null}
+          phone={settings.general.contactPhone}
+        />
         <Logo storeName={settings.general.storeName} logoUrl={settings.general.logoUrl || undefined} />
 
-        <SearchAutocomplete className="mx-auto hidden w-full max-w-md md:block" />
+        <SearchAutocomplete className="mx-auto hidden w-full max-w-xl md:block" />
 
-        <div className="ml-auto flex items-center gap-1 md:ml-0">
-          <Link href="/search" className="grid h-10 w-10 place-items-center rounded-full hover:bg-ivory md:hidden" aria-label="Search">
-            <Search className="h-5 w-5" />
+        <div className="ml-auto flex items-center gap-0.5 md:ml-0 lg:gap-5">
+          <Link href="/search" className="group md:hidden" aria-label="Search">
+            <HeaderActionIcon>
+              <Search className="h-5 w-5" />
+            </HeaderActionIcon>
+          </Link>
+          <Link href="/track-order" className="group hidden items-center gap-2.5 xl:flex">
+            <HeaderActionIcon>
+              <Package className="h-[18px] w-[18px]" />
+            </HeaderActionIcon>
+            <HeaderActionText top="Where’s my order?" bottom="Track order" />
           </Link>
           {user ? (
             <AccountMenu name={user.name} isStaff={isStaffRole(user.role)} />
           ) : (
-            <Link href="/login" className="grid h-10 w-10 place-items-center rounded-full hover:bg-ivory" aria-label="Sign in">
-              <User className="h-5 w-5" />
+            <Link href="/login" className="group flex items-center gap-2.5" aria-label="Sign in">
+              <HeaderActionIcon>
+                <User className="h-[18px] w-[18px]" />
+              </HeaderActionIcon>
+              <HeaderActionText top="Welcome" bottom="Sign in" />
             </Link>
           )}
-          <Link
-            href="/cart"
-            className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-ivory"
-            aria-label={`Shopping cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`}
-          >
-            <ShoppingBag className="h-5 w-5" />
-            {cartCount > 0 ? (
-              <span className="absolute right-0.5 top-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-gold px-1 text-[11px] font-bold text-ink">
-                {cartCount > 99 ? "99+" : cartCount}
-              </span>
-            ) : null}
+          <Link href="/cart" className="group flex items-center gap-2.5" aria-label={cartLabel}>
+            <HeaderActionIcon>
+              <ShoppingBag className="h-[18px] w-[18px]" />
+              {cartCount > 0 ? (
+                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold px-1 text-[10px] font-bold text-ink ring-2 ring-white">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              ) : null}
+            </HeaderActionIcon>
+            <HeaderActionText top="My bag" bottom={`${cartCount} item${cartCount === 1 ? "" : "s"}`} />
           </Link>
         </div>
       </div>
 
-      <nav aria-label="Main" className="hidden border-t border-line/70 lg:block">
-        <ul className="container-page flex h-11 items-center gap-7 text-sm">
-          <li>
-            <Link href="/shop" className="font-medium text-ink hover:text-gold-deep">
-              Shop all
-            </Link>
-          </li>
-          {nav.map((category) => (
-            <li key={category.slug} className="group relative">
-              <Link
-                href={`/category/${category.slug}`}
-                className="inline-flex items-center gap-1 font-medium text-ink hover:text-gold-deep"
-                aria-haspopup={category.children.length ? "true" : undefined}
-              >
-                {category.name}
-                {category.children.length ? <ChevronDown className="h-3.5 w-3.5 text-muted" aria-hidden="true" /> : null}
-              </Link>
-              {category.children.length ? (
-                <div className="invisible absolute left-0 top-full z-50 pt-2 opacity-0 transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-                  <ul className="card min-w-56 p-2">
-                    {category.children.map((child) => (
-                      <li key={child.slug}>
-                        <Link href={`/category/${child.slug}`} className="block rounded-md px-3 py-2 text-sm text-charcoal hover:bg-ivory hover:text-ink">
-                          {child.name}
-                        </Link>
-                      </li>
-                    ))}
-                    <li className="mt-1 border-t border-line pt-1">
-                      <Link href={`/category/${category.slug}`} className="block rounded-md px-3 py-2 text-sm font-medium text-gold-deep hover:bg-ivory">
-                        View all {category.name}
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              ) : null}
-            </li>
-          ))}
-          <li>
-            <Link href="/brands" className="font-medium text-ink hover:text-gold-deep">
-              Brands
-            </Link>
-          </li>
-          <li className="ml-auto">
-            <Link href="/offers" className="font-semibold text-gold-deep hover:text-ink">
-              Offers
-            </Link>
-          </li>
-        </ul>
-      </nav>
-    </header>
+      <MainNav nav={nav} />
+      {/* Champagne hairline under the header. */}
+      <div className="h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" aria-hidden="true" />
+    </StickyHeader>
   );
 }
 
 export function AnnouncementBar({ settings }: { settings: StoreSettings }) {
-  const { announcement } = settings;
-  if (!announcement.enabled || !announcement.text) return null;
+  const { announcement, general, social } = settings;
+  const hasMessage = announcement.enabled && Boolean(announcement.text);
+  const phone = general.contactPhone;
+  const socials = [
+    { href: social.facebook, label: "Facebook", Icon: FacebookIcon },
+    { href: social.instagram, label: "Instagram", Icon: InstagramIcon },
+    { href: social.youtube, label: "YouTube", Icon: YoutubeIcon },
+    { href: social.tiktok, label: "TikTok", Icon: TiktokIcon },
+    { href: social.linkedin, label: "LinkedIn", Icon: LinkedinIcon },
+  ].filter((s) => s.href);
+
   return (
-    <div className="bg-ink text-center text-xs text-ivory sm:text-sm">
-      <p className="container-page py-2">
-        {announcement.text}
-        {announcement.linkUrl ? (
-          <>
-            {" "}
-            <Link href={announcement.linkUrl} className="font-semibold text-gold underline-offset-4 hover:underline">
-              {announcement.linkLabel || "Learn more"}
-            </Link>
-          </>
+    // Without a message there is nothing to show on phones; the hotline and links are desktop-only.
+    <div className={cn("relative overflow-hidden bg-ink text-ivory/85", !hasMessage && "hidden lg:block")}>
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_120%_at_50%_50%,rgb(198_166_107/0.16),transparent_70%)]"
+        aria-hidden="true"
+      />
+      <div className="container-page relative flex min-h-9 items-center justify-center gap-6 py-2 text-xs sm:min-h-10 sm:text-[13px] lg:justify-between">
+        <div className="hidden min-w-0 flex-1 items-center gap-5 lg:flex">
+          {phone ? (
+            <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap transition-colors hover:text-gold">
+              <Phone className="h-3.5 w-3.5 text-gold" aria-hidden="true" />
+              {phone}
+            </a>
+          ) : null}
+          {general.businessHours ? <span className="hidden truncate text-ivory/50 2xl:inline">{general.businessHours}</span> : null}
+        </div>
+
+        {hasMessage ? (
+          <p className="text-center">
+            <Sparkles className="mr-2 hidden h-3.5 w-3.5 align-[-2px] text-gold sm:inline" aria-hidden="true" />
+            {announcement.text}
+            {announcement.linkUrl ? (
+              <>
+                {" "}
+                <Link href={announcement.linkUrl} className="font-semibold text-gold underline-offset-4 hover:underline">
+                  {announcement.linkLabel || "Learn more"}
+                </Link>
+              </>
+            ) : null}
+          </p>
         ) : null}
-      </p>
+
+        <div className="hidden flex-1 items-center justify-end gap-5 lg:flex">
+          <Link href="/track-order" className="transition-colors hover:text-gold">
+            Track order
+          </Link>
+          <Link href="/contact" className="transition-colors hover:text-gold">
+            Help &amp; contact
+          </Link>
+          {socials.length ? (
+            <ul className="flex items-center gap-3 border-l border-ivory/15 pl-5">
+              {socials.map(({ href, label, Icon }) => (
+                <li key={label}>
+                  <a href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="block text-ivory/70 transition-colors hover:text-gold">
+                    <Icon className="h-3.5 w-3.5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }

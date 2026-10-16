@@ -120,7 +120,7 @@ export function SearchAutocomplete({ placeholder = "Search watches, earbuds, rin
         Search products
       </label>
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden="true" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gold-dark" aria-hidden="true" />
         <input
           id={inputId}
           name="q"
@@ -144,9 +144,15 @@ export function SearchAutocomplete({ placeholder = "Search watches, earbuds, rin
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={onKeyDown}
-          className="h-10 w-full rounded-full border border-line bg-ivory/50 pl-9 pr-9 text-sm placeholder:text-muted/80 focus:border-gold-dark focus:bg-white focus:outline-none focus:ring-2 focus:ring-gold/30"
+          className="h-11 w-full rounded-full border border-line bg-ivory/60 pl-11 pr-32 text-sm shadow-[inset_0_1px_2px_rgb(23_23_23/0.04)] transition placeholder:text-muted/80 hover:border-gold/60 focus:border-gold focus:bg-white focus:outline-none focus:ring-4 focus:ring-gold/15 lg:h-12 [&::-webkit-search-cancel-button]:hidden"
         />
-        {loading ? <Spinner className="absolute right-3 top-1/2 -translate-y-1/2 text-gold-dark" /> : null}
+        {loading ? <Spinner className="absolute right-[6.5rem] top-1/2 -translate-y-1/2 text-gold-dark" /> : null}
+        <button
+          type="submit"
+          className="absolute right-1 top-1/2 inline-flex h-9 -translate-y-1/2 items-center rounded-full bg-ink px-5 text-sm font-medium text-ivory transition-colors hover:bg-ink-soft hover:text-gold-light lg:h-10"
+        >
+          Search
+        </button>
       </div>
 
       {showPanel ? (
