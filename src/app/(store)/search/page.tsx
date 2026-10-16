@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CatalogView, PageHeader } from "@/components/store/catalog";
+import { LiveSearchInput } from "@/components/store/live-search-input";
 import { firstParam } from "@/lib/utils";
 
 export async function generateMetadata({ searchParams }: PageProps<"/search">): Promise<Metadata> {
@@ -23,14 +24,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
             <label htmlFor="search-page-input" className="sr-only">
               Search products
             </label>
-            <input
-              id="search-page-input"
-              name="q"
-              type="search"
-              defaultValue={q}
-              placeholder="Search by name, brand or SKU"
-              className="h-11 flex-1 rounded-md border border-line px-4 text-sm focus:border-gold-dark focus:outline-none focus:ring-2 focus:ring-gold/30"
-            />
+            <LiveSearchInput id="search-page-input" defaultValue={q} />
             <button type="submit" className="h-11 rounded-md bg-ink px-5 text-sm font-medium text-ivory hover:bg-ink-soft">
               Search
             </button>

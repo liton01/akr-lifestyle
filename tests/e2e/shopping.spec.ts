@@ -46,6 +46,27 @@ test("guest can browse, add to cart, check out with cash on delivery and track t
   await expect(page.getByText("We could not find an order")).toBeVisible();
 });
 
+test("search suggests products while typing and filters the results page live", async ({ page }) => {
+  await page.goto("/");
+  const box = page.getByRole("combobox", { name: "Search products" });
+  await box.fill("power ba");
+  const option = page.getByRole("option", { name: /Voltix 20,000mAh Fast-Charge Power Bank/ });
+  await expect(option).toBeVisible();
+  await expect(page.getByRole("option", { name: /See all \d+ results? for “power ba”/ })).toBeVisible();
+  await box.press("ArrowDown");
+  await box.press("Enter");
+  await page.waitForURL("**/product/voltix-20000mah-power-bank");
+
+  await page.goto("/search");
+  await page.getByLabel("Search products", { exact: true }).last().fill("aurelle");
+  await page.waitForURL(/\/search\?q=aurelle/);
+  await expect(page.getByRole("heading", { name: "Results for “aurelle”" })).toBeVisible();
+  await expect(page.getByText("4 products")).toBeVisible();
+
+  await box.fill("zzqqxx");
+  await expect(page.getByText("No products match “zzqqxx”.")).toBeVisible();
+});
+
 test("server rejects invalid checkout input and keeps what the customer typed", async ({ page }) => {
   await page.goto("/product/voltix-braided-usb-c-cable-2m");
   await page.getByRole("button", { name: "Add to cart" }).click();

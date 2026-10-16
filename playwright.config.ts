@@ -3,6 +3,11 @@ import { config as loadEnv } from "dotenv";
 
 loadEnv({ quiet: true });
 
+// Fail immediately (instead of waiting for an unhealthy server) when the test DB is not configured.
+if (!process.env.TEST_DATABASE_URL) {
+  throw new Error('TEST_DATABASE_URL is not set in .env — end-to-end tests need a separate "*_test" database (see README, section 5).');
+}
+
 const PORT = 3200;
 const baseURL = `http://localhost:${PORT}`;
 

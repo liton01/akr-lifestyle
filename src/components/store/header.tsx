@@ -6,6 +6,7 @@ import type { CurrentUser } from "@/server/auth/session";
 import type { CategoryIndex } from "@/server/services/categories";
 import { AccountMenu, MobileMenu } from "./header-client";
 import { Logo } from "./logo";
+import { SearchAutocomplete } from "./search-autocomplete";
 
 export type NavCategory = { name: string; slug: string; children: { name: string; slug: string }[] };
 
@@ -40,21 +41,7 @@ export function SiteHeader({
         <MobileMenu nav={nav} user={user ? { name: user.name, isStaff: isStaffRole(user.role) } : null} />
         <Logo storeName={settings.general.storeName} logoUrl={settings.general.logoUrl || undefined} />
 
-        <form action="/search" method="get" role="search" className="mx-auto hidden w-full max-w-md md:block">
-          <label htmlFor="site-search" className="sr-only">
-            Search products
-          </label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden="true" />
-            <input
-              id="site-search"
-              name="q"
-              type="search"
-              placeholder="Search watches, earbuds, rings…"
-              className="h-10 w-full rounded-full border border-line bg-ivory/50 pl-9 pr-4 text-sm placeholder:text-muted/80 focus:border-gold-dark focus:bg-white focus:outline-none focus:ring-2 focus:ring-gold/30"
-            />
-          </div>
-        </form>
+        <SearchAutocomplete className="mx-auto hidden w-full max-w-md md:block" />
 
         <div className="ml-auto flex items-center gap-1 md:ml-0">
           <Link href="/search" className="grid h-10 w-10 place-items-center rounded-full hover:bg-ivory md:hidden" aria-label="Search">
