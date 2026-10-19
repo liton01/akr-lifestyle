@@ -17,6 +17,9 @@
   --color-warning: #a8670f;
   --color-danger: #b42318;
   --color-info: #2c5d8f;
+  /* Fixed colours that never change with the theme (text on gold, badges over photos). */
+  --color-onyx: #171717;
+  --color-pearl: #f6f1e7;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-cormorant), ui-serif, Georgia, serif;
@@ -54,6 +57,65 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+
+  /*
+   * Storefront dark theme. The store layout sets data-theme on its root from the visitor's
+   * saved choice; the tokens are swapped, so components need no dark: classes. Matching the
+   * whole document via :has() also darkens the page behind it (overscroll, scrollbars).
+   */
+  [data-theme="dark"],
+  :root:has([data-theme="dark"]) {
+    color-scheme: dark;
+    --color-white: #121110;
+    --color-ivory: #1c1a17;
+    --color-ivory-dark: #2a2622;
+    --color-ink: #f3ede2;
+    --color-ink-soft: #ddd5c7;
+    --color-charcoal: #cdc5b7;
+    --color-muted: #a1998d;
+    --color-line: #34302a;
+    --color-gold-dark: #b8995c;
+    --color-gold-deep: #d6b97f;
+    --color-success: #5cb383;
+    --color-warning: #e2a548;
+    --color-danger: #f0776b;
+    --color-info: #74a9de;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 28px -14px rgb(0 0 0 / 0.7);
+  }
+  [data-theme="dark"] ::selection {
+    background: rgb(198 166 107 / 0.45);
+    color: inherit;
+  }
+
+  /*
+   * Areas designed to be black in the light theme (top bar, footer, hero, promo tiles) keep the
+   * light-theme tokens in dark mode too, so they look exactly as designed.
+   */
+  .theme-light,
+  [data-theme="light"] {
+    color-scheme: light;
+    --color-white: #ffffff;
+    --color-ivory: #f6f1e7;
+    --color-ivory-dark: #ebe3d3;
+    --color-ink: #171717;
+    --color-ink-soft: #2a2a2a;
+    --color-charcoal: #424242;
+    --color-muted: #6b6b6b;
+    --color-line: #e3dccd;
+    --color-gold-dark: #a88a50;
+    --color-gold-deep: #7d6535;
+    --color-success: #2f7d4f;
+    --color-warning: #a8670f;
+    --color-danger: #b42318;
+    --color-info: #2c5d8f;
+    --shadow-card: 0 1px 2px rgb(23 23 23 / 0.04), 0 8px 24px -12px rgb(23 23 23 / 0.12);
+  }
+
+  /* Set for a moment while the theme flips, so every colour changes at once instead of fading. */
+  .theme-switching,
+  .theme-switching * {
+    transition: none !important;
   }
 }
 

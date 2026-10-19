@@ -49,7 +49,7 @@ export default async function HomePage() {
           />
         </>
       ) : (
-      <section className="relative overflow-hidden bg-ink text-ivory">
+      <section className="theme-light relative overflow-hidden bg-ink text-ivory">
         <div className="container-page grid items-center gap-10 py-14 md:grid-cols-2 md:py-20 lg:py-28">
           <div className="relative z-10">
             {homepage.heroEyebrow ? <p className="eyebrow text-gold">{homepage.heroEyebrow}</p> : null}
@@ -217,7 +217,7 @@ type BannerData = { id: string; title: string; subtitle: string | null; imageUrl
 
 function PromoTile({ banner }: { banner: BannerData }) {
   const content = (
-    <div className="group relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] bg-ink">
+    <div className="theme-light group relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] bg-ink">
       <Image src={banner.imageUrl} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 p-6 text-ivory">

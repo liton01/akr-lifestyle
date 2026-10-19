@@ -11,8 +11,8 @@ const badgeTones: Record<Tone, string> = {
   danger: "bg-danger/10 text-danger ring-danger/20",
   info: "bg-info/10 text-info ring-info/20",
   gold: "bg-gold/15 text-gold-deep ring-gold/30",
-  solid: "bg-gold text-ink ring-gold",
-  dark: "bg-ink text-ivory ring-ink",
+  solid: "bg-gold text-onyx ring-gold",
+  dark: "bg-onyx text-pearl ring-onyx",
   light: "bg-white/90 text-ink ring-line",
 };
 

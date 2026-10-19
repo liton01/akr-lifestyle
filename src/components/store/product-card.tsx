@@ -1,29 +1,16 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/feedback";
 import { Price } from "@/components/ui/price";
 import type { ProductCardData } from "@/server/services/storefront";
 import { QuickAddButton } from "./add-to-cart";
+import { CardMedia } from "./card-media";
 
-export function ProductCard({ product, priority }: { product: ProductCardData; priority?: boolean }) {
+export function ProductCard({ product, priority, autoplayDelayMs }: { product: ProductCardData; priority?: boolean; autoplayDelayMs?: number }) {
   const href = `/product/${product.slug}`;
   return (
     <article className="group flex h-full flex-col">
-      <Link href={href} className="relative block overflow-hidden rounded-[var(--radius-card)] bg-ivory" aria-label={product.name}>
-        {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt={product.imageAlt}
-            width={600}
-            height={600}
-            sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 48vw"
-            className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-            priority={priority}
-          />
-        ) : (
-          <div className="aspect-square w-full" />
-        )}
-        <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+      <CardMedia href={href} name={product.name} images={product.images} priority={priority} autoplayDelayMs={autoplayDelayMs} raiseDots={!product.inStock}>
+        <div className="pointer-events-none absolute left-3 top-3 flex flex-col items-start gap-1.5">
           {product.price.discountLabel || product.price.savingsPercent > 0 ? (
             <Badge tone="solid">
               {product.price.discountLabel && product.price.discountLabel !== "Sale"
@@ -35,11 +22,11 @@ export function ProductCard({ product, priority }: { product: ProductCardData; p
           {product.isBestSeller ? <Badge tone="dark">Best seller</Badge> : null}
         </div>
         {!product.inStock ? (
-          <div className="absolute inset-x-3 bottom-3 rounded-md bg-white/90 py-1.5 text-center text-xs font-semibold uppercase tracking-wider text-charcoal">
+          <div className="pointer-events-none absolute inset-x-3 bottom-3 rounded-md bg-white/90 py-1.5 text-center text-xs font-semibold uppercase tracking-wider text-charcoal">
             Out of stock
           </div>
         ) : null}
-      </Link>
+      </CardMedia>
       <div className="flex flex-1 flex-col pt-3">
         {product.brandName ? <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-dark">{product.brandName}</p> : null}
         <h3 className="mt-1 line-clamp-2 font-sans text-sm font-medium leading-5 text-ink">
@@ -73,7 +60,8 @@ export function ProductGrid({ products, priorityCount = 0 }: { products: Product
     <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:grid-cols-4">
       {products.map((product, index) => (
         <li key={product.id}>
-          <ProductCard product={product} priority={index < priorityCount} />
+          {/* Stagger autoplay along each row, so the images change in a gentle wave rather than all at once. */}
+          <ProductCard product={product} priority={index < priorityCount} autoplayDelayMs={(index % 4) * 800} />
         </li>
       ))}
     </ul>

@@ -17,7 +17,7 @@ export function SiteFooter({ settings, nav }: { settings: StoreSettings; nav: Na
   const whatsappDigits = general.whatsappNumber.replace(/\D/g, "");
 
   return (
-    <footer className="mt-24 bg-ink text-ivory/80">
+    <footer className="theme-light mt-24 bg-ink text-ivory/80">
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <Logo storeName={general.storeName} logoUrl={general.logoUrl || undefined} inverted />

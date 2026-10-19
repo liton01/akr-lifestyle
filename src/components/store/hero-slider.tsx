@@ -2,9 +2,10 @@
 
 import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from "react";
 import { ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePageHidden, usePrefersReducedMotion } from "./motion-hooks";
 
 export type HeroSlide = {
   id: string;
@@ -23,17 +24,6 @@ export type HeroSlide = {
 const INTERVAL_MS = 6500;
 const SWIPE_PX = 50;
 
-const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
-function subscribeReducedMotion(callback: () => void) {
-  const mq = window.matchMedia(reducedMotionQuery);
-  mq.addEventListener("change", callback);
-  return () => mq.removeEventListener("change", callback);
-}
-function subscribeVisibility(callback: () => void) {
-  document.addEventListener("visibilitychange", callback);
-  return () => document.removeEventListener("visibilitychange", callback);
-}
-
 /**
  * Full-width homepage hero carousel driven by HOME_HERO banners (Admin → Banners).
  * Crossfades between slides and auto-advances, pausing on hover, keyboard focus, a hidden
@@ -47,8 +37,8 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const pointerStart = useRef<number | null>(null);
-  const reducedMotion = useSyncExternalStore(subscribeReducedMotion, () => window.matchMedia(reducedMotionQuery).matches, () => false);
-  const hidden = useSyncExternalStore(subscribeVisibility, () => document.visibilityState === "hidden", () => false);
+  const reducedMotion = usePrefersReducedMotion();
+  const hidden = usePageHidden();
   const playing = count > 1 && !userPaused && !hovered && !focused && !hidden && !reducedMotion;
   const current = slides[index] ?? slides[0]!;
   const lightControls = current.textTone === "LIGHT";
@@ -73,7 +63,7 @@ export function HeroSlider({ slides }: { slides: HeroSlide[] }) {
     <section
       aria-roledescription="carousel"
       aria-label="Featured collections"
-      className="relative h-[78svh] min-h-[480px] max-h-[760px] overflow-hidden bg-ink"
+      className="theme-light relative h-[78svh] min-h-[480px] max-h-[760px] overflow-hidden bg-ink"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onFocus={() => setFocused(true)}

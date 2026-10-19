@@ -17,8 +17,8 @@ export type ProductCardData = {
   name: string;
   brandName: string | null;
   categoryName: string;
-  imageUrl: string | null;
-  imageAlt: string;
+  /** Gallery images in display order (at most CARD_IMAGE_LIMIT); cards with several auto-slide. */
+  images: { url: string; alt: string }[];
   price: UnitPrice;
   /** True when variants have different prices, so "From" is shown. */
   priceFrom: boolean;
@@ -30,6 +30,9 @@ export type ProductCardData = {
   quickAddVariantId: string | null;
 };
 
+/** How many gallery images a product card can cycle through. */
+export const CARD_IMAGE_LIMIT = 4;
+
 const cardSelect = {
   ...productPriceSelect,
   slug: true,
@@ -39,7 +42,7 @@ const cardSelect = {
   lowStockThreshold: true,
   brand: { select: { name: true } },
   category: { select: { name: true } },
-  images: { select: { url: true, alt: true }, orderBy: { sortOrder: "asc" }, take: 1 },
+  images: { select: { url: true, alt: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }], take: CARD_IMAGE_LIMIT },
   variants: {
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },
@@ -70,8 +73,7 @@ export function toProductCard(row: CardRow, ctx: LoadedPricingContext): ProductC
     name: row.name,
     brandName: row.brand?.name ?? null,
     categoryName: row.category.name,
-    imageUrl: row.images[0]?.url ?? null,
-    imageAlt: row.images[0]?.alt || row.name,
+    images: row.images.map((image) => ({ url: image.url, alt: image.alt || row.name })),
     price,
     priceFrom: distinct.size > 1,
     inStock: totalStock > 0,

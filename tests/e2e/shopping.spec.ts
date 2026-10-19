@@ -113,6 +113,70 @@ test("category dropdown opens on hover and closes once a sub-category is chosen"
   await expect(subCategory).toBeHidden();
 });
 
+test("shop filters apply as soon as they are clicked and can be removed from the tags", async ({ page }) => {
+  await page.goto("/shop");
+  const filters = page.getByRole("form", { name: "Product filters" });
+  const count = page.getByText(/^\d+ products?$/);
+  const allCount = await count.textContent();
+
+  await filters.getByRole("checkbox", { name: "Voltix" }).check();
+  await page.waitForURL(/[?&]brand=voltix/);
+  await expect(count).not.toHaveText(allCount ?? "");
+  await expect(page.getByRole("link", { name: "Remove filter: Voltix" })).toBeVisible();
+
+  // Price filters apply once typing pauses — no button to press.
+  await filters.getByLabel("Minimum price").fill("1000");
+  await page.waitForURL(/[?&]min=1000/);
+  await expect(page.getByRole("link", { name: /Remove filter: From .*1,000/ })).toBeVisible();
+
+  await page.getByRole("link", { name: "Remove filter: Voltix" }).click();
+  await page.waitForURL((url) => !url.searchParams.has("brand") && url.searchParams.get("min") === "1000");
+  await expect(filters.getByRole("checkbox", { name: "Voltix" })).not.toBeChecked();
+  await expect(filters.getByLabel("Minimum price")).toHaveValue("1000");
+});
+
+test("product cards with several images slide on their own, and swiping never opens the product", async ({ page }) => {
+  await page.goto("/shop");
+  await page.mouse.move(0, 0);
+  const media = page.locator('[data-slides="2"]').first();
+  await expect(media).toHaveAttribute("data-active-slide", "0");
+  await expect(media).toHaveAttribute("data-active-slide", "1", { timeout: 10_000 });
+
+  // Drag sideways across the image: the slide changes and we stay on the shop page.
+  const box = (await media.boundingBox())!;
+  const y = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width * 0.7, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.2, y, { steps: 5 });
+  await page.mouse.up();
+  await expect(media).toHaveAttribute("data-active-slide", "0");
+  await expect(page).toHaveURL(/\/shop$/);
+
+  // A plain click still opens the product.
+  await media.getByRole("link").click();
+  await page.waitForURL("**/product/**");
+});
+
+test("dark mode is switched from the header and remembered across pages and reloads", async ({ page }) => {
+  await page.goto("/");
+  const root = page.locator("[data-store-root]");
+  await expect(root).toHaveAttribute("data-theme", "light");
+
+  await page.getByRole("button", { name: "Switch to dark mode" }).click();
+  await expect(root).toHaveAttribute("data-theme", "dark");
+
+  // A full page load is rendered dark straight from the server, and the page itself really is dark.
+  await page.goto("/shop");
+  await expect(root).toHaveAttribute("data-theme", "dark");
+  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(18, 17, 16)");
+
+  await page.getByRole("button", { name: "Switch to light mode" }).click();
+  await expect(root).toHaveAttribute("data-theme", "light");
+  await page.reload();
+  await expect(root).toHaveAttribute("data-theme", "light");
+  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe("rgb(255, 255, 255)");
+});
+
 test("server rejects invalid checkout input and keeps what the customer typed", async ({ page }) => {
   await page.goto("/product/voltix-braided-usb-c-cable-2m");
   await page.getByRole("button", { name: "Add to cart" }).click();

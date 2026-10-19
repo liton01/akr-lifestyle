@@ -7,10 +7,12 @@ import type { CurrentUser } from "@/server/auth/session";
 import type { CategoryIndex } from "@/server/services/categories";
 import { AccountMenu, MobileMenu, StickyHeader } from "./header-client";
 import { HeaderActionIcon, HeaderActionText } from "./header-parts";
+import type { Theme } from "@/lib/theme";
 import { Logo } from "./logo";
 import { MainNav } from "./main-nav";
 import { SearchAutocomplete } from "./search-autocomplete";
 import { FacebookIcon, InstagramIcon, LinkedinIcon, TiktokIcon, YoutubeIcon } from "./social-icons";
+import { ThemeToggle } from "./theme-toggle";
 
 export type NavCategory = { name: string; slug: string; children: { name: string; slug: string }[] };
 
@@ -33,11 +35,13 @@ export function SiteHeader({
   nav,
   user,
   cartCount,
+  theme,
 }: {
   settings: StoreSettings;
   nav: NavCategory[];
   user: CurrentUser | null;
   cartCount: number;
+  theme: Theme;
 }) {
   const cartLabel = `Shopping cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`;
   return (
@@ -47,6 +51,7 @@ export function SiteHeader({
           nav={nav}
           user={user ? { name: user.name, isStaff: isStaffRole(user.role) } : null}
           phone={settings.general.contactPhone}
+          theme={theme}
         />
         <Logo storeName={settings.general.storeName} logoUrl={settings.general.logoUrl || undefined} />
 
@@ -58,6 +63,7 @@ export function SiteHeader({
               <Search className="h-5 w-5" />
             </HeaderActionIcon>
           </Link>
+          <ThemeToggle initial={theme} className="hidden md:block" />
           <Link href="/track-order" className="group hidden items-center gap-2.5 xl:flex">
             <HeaderActionIcon>
               <Package className="h-[18px] w-[18px]" />
@@ -78,7 +84,7 @@ export function SiteHeader({
             <HeaderActionIcon>
               <ShoppingBag className="h-[18px] w-[18px]" />
               {cartCount > 0 ? (
-                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold px-1 text-[10px] font-bold text-ink ring-2 ring-white">
+                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold px-1 text-[10px] font-bold text-onyx ring-2 ring-white">
                   {cartCount > 99 ? "99+" : cartCount}
                 </span>
               ) : null}
@@ -109,7 +115,7 @@ export function AnnouncementBar({ settings }: { settings: StoreSettings }) {
 
   return (
     // Without a message there is nothing to show on phones; the hotline and links are desktop-only.
-    <div className={cn("relative overflow-hidden bg-ink text-ivory/85", !hasMessage && "hidden lg:block")}>
+    <div className={cn("theme-light relative overflow-hidden bg-ink text-ivory/85", !hasMessage && "hidden lg:block")}>
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_120%_at_50%_50%,rgb(198_166_107/0.16),transparent_70%)]"
         aria-hidden="true"

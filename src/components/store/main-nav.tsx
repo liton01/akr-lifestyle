@@ -9,7 +9,7 @@ import type { NavCategory } from "./header";
 
 /** Category links: uppercase and letter-spaced on wide screens, with a gold underline that draws in on hover. */
 const navLinkClass =
-  "relative inline-flex items-center gap-1 py-1 font-medium text-charcoal transition-colors hover:text-ink xl:text-[13px] xl:uppercase xl:tracking-[0.12em] " +
+  "relative inline-flex items-center gap-1 whitespace-nowrap py-1 font-medium text-charcoal transition-colors hover:text-ink xl:text-[13px] xl:uppercase xl:tracking-[0.1em] " +
   "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-[1.5px] after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 " +
   "hover:after:scale-x-100 focus-visible:after:scale-x-100";
 
@@ -28,9 +28,9 @@ export function MainNav({ nav }: { nav: NavCategory[] }) {
 
   return (
     <nav aria-label="Main" className="relative hidden border-t border-line/60 lg:block">
-      <ul className="container-page flex h-12 items-center gap-6 text-sm xl:gap-8">
+      <ul className="container-page flex h-12 items-center gap-5 text-sm xl:gap-7">
         {/* "Shop all" leads the bar in the same type as the categories, set apart by a gold diamond and a hairline. */}
-        <li className="flex h-full items-center border-r border-line pr-6 xl:pr-8">
+        <li className="flex h-full items-center border-r border-line pr-5 xl:pr-7">
           <Link href="/shop" className={cn(navLinkClass, "gap-2.5 font-semibold text-ink")}>
             <span className="h-[7px] w-[7px] rotate-45 bg-gradient-to-br from-gold-light to-gold-dark" aria-hidden="true" />
             Shop all
@@ -88,7 +88,7 @@ export function MainNav({ nav }: { nav: NavCategory[] }) {
         <li className="ml-auto">
           <Link
             href="/offers"
-            className="inline-flex h-8 items-center gap-1.5 rounded-full bg-gradient-to-r from-gold-light via-gold to-gold-dark px-4 text-[13px] font-semibold text-ink shadow-[0_6px_16px_-8px_rgb(125_101_53/0.9)] transition hover:brightness-105"
+            className="inline-flex h-8 items-center gap-1.5 rounded-full bg-gradient-to-r from-gold-light via-gold to-gold-dark px-4 text-[13px] font-semibold text-onyx shadow-[0_6px_16px_-8px_rgb(125_101_53/0.9)] transition hover:brightness-105"
           >
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             Offers
@@ -143,7 +143,7 @@ function MegaPanel({ category, open }: { category: NavCategory; open: boolean })
           </ul>
           <Link
             href={`/category/${category.slug}?sort=newest`}
-            className="group/feature relative col-span-3 flex min-h-44 flex-col justify-end overflow-hidden rounded-2xl bg-ink p-6 text-ivory"
+            className="theme-light group/feature relative col-span-3 flex min-h-44 flex-col justify-end overflow-hidden rounded-2xl bg-ink p-6 text-ivory"
           >
             {/* Decorative gold rings, echoing the hero artwork. */}
             <span className="absolute -right-10 -top-10 h-40 w-40 rounded-full border border-gold/30" aria-hidden="true" />

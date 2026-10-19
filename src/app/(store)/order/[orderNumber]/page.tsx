@@ -49,7 +49,7 @@ export default async function OrderReceiptPage({ params, searchParams }: PagePro
   return (
     <div className="container-page max-w-4xl py-8 lg:py-12">
       {justPlaced || payment === "success" ? (
-        <div className="mb-8 rounded-[var(--radius-card)] bg-ink p-8 text-center text-ivory">
+        <div className="theme-light mb-8 rounded-[var(--radius-card)] bg-ink p-8 text-center text-ivory">
           <CheckCircle2 className="mx-auto h-12 w-12 text-gold" aria-hidden="true" />
           <h1 className="mt-4 text-4xl font-semibold">Thank you for your order!</h1>
           <p className="mt-2 text-ivory/75">

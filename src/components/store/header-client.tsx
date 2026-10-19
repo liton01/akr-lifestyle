@@ -6,8 +6,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { signOutAction } from "@/server/actions/auth";
+import type { Theme } from "@/lib/theme";
 import type { NavCategory } from "./header";
 import { HeaderActionIcon, HeaderActionText } from "./header-parts";
+import { ThemeSwitch } from "./theme-toggle";
 
 function subscribeScroll(callback: () => void) {
   window.addEventListener("scroll", callback, { passive: true });
@@ -29,7 +31,7 @@ export function StickyHeader({ children }: { children: ReactNode }) {
   );
 }
 
-export function MobileMenu({ nav, user, phone }: { nav: NavCategory[]; user: { name: string; isStaff: boolean } | null; phone: string }) {
+export function MobileMenu({ nav, user, phone, theme }: { nav: NavCategory[]; user: { name: string; isStaff: boolean } | null; phone: string; theme: Theme }) {
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -56,12 +58,12 @@ export function MobileMenu({ nav, user, phone }: { nav: NavCategory[]; user: { n
       <dialog
         ref={dialogRef}
         onClose={() => setOpen(false)}
-        className="m-0 h-dvh max-h-dvh w-[min(22rem,88vw)] max-w-none bg-white p-0 backdrop:bg-ink/60 backdrop:backdrop-blur-sm"
+        className="m-0 h-dvh max-h-dvh w-[min(22rem,88vw)] max-w-none bg-white p-0 backdrop:bg-black/60 backdrop:backdrop-blur-sm"
         aria-label="Menu"
         onClick={closeOnNavigate}
       >
         <div className="flex h-full flex-col">
-          <div className="relative bg-ink px-5 pb-5 pt-4 text-ivory">
+          <div className="theme-light relative bg-ink px-5 pb-5 pt-4 text-ivory">
             <div className="flex items-center justify-between">
               <span className="font-display text-2xl font-semibold tracking-wide">Menu</span>
               <button
@@ -118,7 +120,7 @@ export function MobileMenu({ nav, user, phone }: { nav: NavCategory[]; user: { n
             </Link>
             <Link
               href="/offers"
-              className="mt-2 flex items-center gap-2 rounded-lg bg-gradient-to-r from-gold-light/70 to-gold/40 px-3 py-3 font-semibold text-ink"
+              className="theme-light mt-2 flex items-center gap-2 rounded-lg bg-ivory bg-gradient-to-r from-gold-light/70 to-gold/40 px-3 py-3 font-semibold text-ink"
             >
               <Sparkles className="h-4 w-4 text-gold-deep" aria-hidden="true" />
               Offers
@@ -138,6 +140,7 @@ export function MobileMenu({ nav, user, phone }: { nav: NavCategory[]; user: { n
                 {phone}
               </a>
             ) : null}
+            <ThemeSwitch initial={theme} />
           </nav>
 
           <div className="border-t border-line bg-ivory/60 p-4">
@@ -215,7 +218,7 @@ export function AccountMenu({ name, isStaff }: { name: string; isStaff: boolean 
         />
       </summary>
       <div className="card absolute right-0 top-full z-50 mt-3 w-60 overflow-hidden">
-        <div className="bg-ink px-4 py-3 text-ivory">
+        <div className="theme-light bg-ink px-4 py-3 text-ivory">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">Signed in</p>
           <p className="truncate font-display text-lg">{name}</p>
         </div>

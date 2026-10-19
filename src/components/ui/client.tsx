@@ -81,7 +81,7 @@ export function ConfirmSubmit({
       <button ref={submitRef} type="submit" name={name} value={value} hidden tabIndex={-1} aria-hidden="true" />
       <dialog
         ref={dialogRef}
-        className="m-auto w-[min(28rem,calc(100vw-2rem))] rounded-xl border border-line p-0 shadow-2xl backdrop:bg-ink/50"
+        className="m-auto w-[min(28rem,calc(100vw-2rem))] rounded-xl border border-line p-0 shadow-2xl backdrop:bg-black/50"
         aria-labelledby={titleId}
       >
         <div className="p-6">

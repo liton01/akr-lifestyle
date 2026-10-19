@@ -23,7 +23,7 @@ export async function GET(request: Request) {
       slug: p.slug,
       name: p.name,
       brandName: p.brandName,
-      imageUrl: p.imageUrl,
+      imageUrl: p.images[0]?.url ?? null,
       price: p.price.finalPrice,
       compareAt: p.price.displayCompareAt,
       priceFrom: p.priceFrom,

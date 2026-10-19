@@ -22,7 +22,7 @@ export default async function OffersPage({ searchParams }: PageProps<"/offers">)
         <>
           <PageHeader breadcrumbs={[{ label: "Offers" }]} eyebrow="Limited time" title="Special offers" description="Sale prices and promotions, applied automatically at checkout." />
           {banner ? (
-            <div className="relative mt-8 aspect-[3/1] overflow-hidden rounded-[var(--radius-card)] bg-ink">
+            <div className="theme-light relative mt-8 aspect-[3/1] overflow-hidden rounded-[var(--radius-card)] bg-ink">
               <Image src={banner.imageUrl} alt="" fill sizes="100vw" className="object-cover" priority />
               <div className="absolute inset-0 flex flex-col justify-center p-6 text-ivory sm:p-12">
                 <h2 className="text-3xl font-semibold sm:text-4xl">{banner.title}</h2>
