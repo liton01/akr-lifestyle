@@ -46,42 +46,42 @@ export function SiteHeader({
   const cartLabel = `Shopping cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`;
   return (
     <StickyHeader>
-      <div className="container-page flex h-[68px] items-center gap-2 sm:gap-3 lg:h-24 lg:gap-8">
+      <div className="theme-light container-page flex h-[68px] items-center gap-2 bg-ink text-ivory sm:gap-3 lg:h-20 lg:gap-8">
         <MobileMenu
           nav={nav}
           user={user ? { name: user.name, isStaff: isStaffRole(user.role) } : null}
           phone={settings.general.contactPhone}
           theme={theme}
         />
-        <Logo storeName={settings.general.storeName} logoUrl={settings.general.logoUrl || undefined} />
+        <Logo storeName={settings.general.storeName} logoUrl={settings.general.logoUrl || undefined} inverted />
 
-        <SearchAutocomplete className="mx-auto hidden w-full max-w-xl md:block" />
+        <SearchAutocomplete className="mx-auto hidden w-full max-w-[360px] md:block" dark />
 
         <div className="ml-auto flex items-center gap-0.5 md:ml-0 lg:gap-5">
           <Link href="/search" className="group md:hidden" aria-label="Search">
-            <HeaderActionIcon>
+            <HeaderActionIcon dark>
               <Search className="h-5 w-5" />
             </HeaderActionIcon>
           </Link>
-          <ThemeToggle initial={theme} className="hidden md:block" />
+          <ThemeToggle initial={theme} className="hidden md:block" dark />
           <Link href="/track-order" className="group hidden items-center gap-2.5 xl:flex">
-            <HeaderActionIcon>
+            <HeaderActionIcon dark>
               <Package className="h-[18px] w-[18px]" />
             </HeaderActionIcon>
-            <HeaderActionText top="Where’s my order?" bottom="Track order" />
+            <HeaderActionText top="Where’s my order?" bottom="Track order" dark />
           </Link>
           {user ? (
             <AccountMenu name={user.name} isStaff={isStaffRole(user.role)} />
           ) : (
             <Link href="/login" className="group flex items-center gap-2.5" aria-label="Sign in">
-              <HeaderActionIcon>
+              <HeaderActionIcon dark>
                 <User className="h-[18px] w-[18px]" />
               </HeaderActionIcon>
-              <HeaderActionText top="Welcome" bottom="Sign in" />
+              <HeaderActionText top="Welcome" bottom="Sign in" dark />
             </Link>
           )}
           <Link href="/cart" className="group flex items-center gap-2.5" aria-label={cartLabel}>
-            <HeaderActionIcon>
+            <HeaderActionIcon dark>
               <ShoppingBag className="h-[18px] w-[18px]" />
               {cartCount > 0 ? (
                 <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold px-1 text-[10px] font-bold text-onyx ring-2 ring-white">
@@ -89,7 +89,7 @@ export function SiteHeader({
                 </span>
               ) : null}
             </HeaderActionIcon>
-            <HeaderActionText top="My bag" bottom={`${cartCount} item${cartCount === 1 ? "" : "s"}`} />
+            <HeaderActionText top="My bag" bottom={`${cartCount} item${cartCount === 1 ? "" : "s"}`} dark />
           </Link>
         </div>
       </div>

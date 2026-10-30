@@ -55,9 +55,9 @@ export function ProductCard({ product, priority, autoplayDelayMs }: { product: P
   );
 }
 
-export function ProductGrid({ products, priorityCount = 0 }: { products: ProductCardData[]; priorityCount?: number }) {
+export function ProductGrid({ products, priorityCount = 0, sixColumns = false }: { products: ProductCardData[]; priorityCount?: number; sixColumns?: boolean }) {
   return (
-    <ul className="grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 xl:grid-cols-4">
+    <ul className={`grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 md:grid-cols-3 ${sixColumns ? "xl:grid-cols-6" : "xl:grid-cols-4"}`}>
       {products.map((product, index) => (
         <li key={product.id}>
           {/* Stagger autoplay along each row, so the images change in a gentle wave rather than all at once. */}

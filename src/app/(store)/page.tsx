@@ -1,19 +1,27 @@
-import { ArrowRight, BadgeCheck, Banknote, RotateCcw, Truck } from "lucide-react";
+import { ArrowRight, BadgeCheck, Banknote, CreditCard, Package, RotateCcw, ShoppingBag, Sparkles, Tags, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSlider } from "@/components/store/hero-slider";
 import { ProductGrid } from "@/components/store/product-card";
 import { ButtonLink } from "@/components/ui/button";
-import { getActiveBrands, getCategoryIndex, getSettings } from "@/server/cache";
+import { getActiveBrands, getSettings } from "@/server/cache";
 import { prisma } from "@/server/db";
 import { getActiveBanners } from "@/server/services/promotions";
 import { getProductCards } from "@/server/services/storefront";
 import { loadPricingContext } from "@/server/services/pricing";
 
 const TRUST_ICONS = [BadgeCheck, Truck, Banknote, RotateCcw];
+const CATEGORY_SHORTCUTS = [
+  { label: "Bags", href: "/category/bags-wallets", Icon: ShoppingBag },
+  { label: "Wallets", href: "/category/bags-wallets", Icon: CreditCard },
+  { label: "Backpacks", href: "/search?q=backpack", Icon: Package },
+  { label: "Travel", href: "/search?q=travel", Icon: Truck },
+  { label: "Accessories", href: "/category/lifestyle-accessories", Icon: Sparkles },
+  { label: "Brands", href: "/brands", Icon: Tags },
+];
 
 export default async function HomePage() {
-  const [settings, categories, brands, ctx] = await Promise.all([getSettings(), getCategoryIndex(), getActiveBrands(), loadPricingContext(prisma)]);
+  const [settings, brands, ctx] = await Promise.all([getSettings(), getActiveBrands(), loadPricingContext(prisma)]);
   const [featured, newArrivals, bestSellers, promoBanners, stripBanners, heroSlides] = await Promise.all([
     getProductCards(prisma, { isFeatured: true }, 8, [{ updatedAt: "desc" }], ctx),
     getProductCards(prisma, { isNewArrival: true }, 8, [{ publishedAt: { sort: "desc", nulls: "last" } }], ctx),
@@ -23,7 +31,6 @@ export default async function HomePage() {
     getActiveBanners(prisma, "HOME_HERO"),
   ]);
   const { homepage } = settings;
-  const topCategories = categories.childrenOf(null).filter((c) => c.isActive);
 
   return (
     <>
@@ -50,10 +57,10 @@ export default async function HomePage() {
         </>
       ) : (
       <section className="theme-light relative overflow-hidden bg-ink text-ivory">
-        <div className="container-page grid items-center gap-10 py-14 md:grid-cols-2 md:py-20 lg:py-28">
+        <div className="container-page grid items-center gap-10 py-14 md:grid-cols-2 md:py-20 lg:min-h-[620px] lg:py-24">
           <div className="relative z-10">
             {homepage.heroEyebrow ? <p className="eyebrow text-gold">{homepage.heroEyebrow}</p> : null}
-            <h1 className="mt-4 text-5xl font-semibold leading-[1.05] text-ivory sm:text-6xl lg:text-7xl">{homepage.heroTitle}</h1>
+            <h1 className="mt-4 max-w-2xl text-5xl font-semibold leading-[1.02] tracking-[-0.035em] text-ivory sm:text-6xl lg:text-7xl">{homepage.heroTitle}</h1>
             {homepage.heroSubtitle ? <p className="mt-6 max-w-xl text-base leading-7 text-ivory/75 sm:text-lg">{homepage.heroSubtitle}</p> : null}
             <p className="mt-6 font-display text-xl italic text-gold">{settings.general.slogan}</p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -86,48 +93,27 @@ export default async function HomePage() {
       </section>
       )}
 
-      {homepage.trustPoints.length ? (
-        <section aria-label="Why shop with us" className="border-b border-line bg-ivory/60">
-          <ul className="container-page grid grid-cols-2 gap-6 py-8 lg:grid-cols-4">
-            {homepage.trustPoints.map((point, index) => {
-              const Icon = TRUST_ICONS[index % TRUST_ICONS.length]!;
-              return (
-                <li key={point.title} className="flex items-start gap-3">
-                  <Icon className="mt-0.5 h-6 w-6 shrink-0 text-gold-dark" aria-hidden="true" />
-                  <div>
-                    <p className="text-sm font-semibold text-ink">{point.title}</p>
-                    <p className="mt-0.5 text-xs leading-5 text-muted">{point.text}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
+      <section aria-label="Shop by category" className="theme-light bg-ink py-3 text-ivory sm:py-4">
+        <ul className="container-page grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
+          {CATEGORY_SHORTCUTS.map(({ label, href, Icon }) => (
+            <li key={label}>
+              <Link href={href} className="group flex min-h-24 flex-col items-center justify-center border border-ivory/15 bg-[radial-gradient(ellipse_at_50%_120%,rgb(198_166_107/0.14),transparent_70%),linear-gradient(145deg,#242321,#111)] px-2 py-3 text-center transition hover:border-gold/60 hover:bg-ink-soft sm:min-h-32 sm:py-4">
+                <Icon className="h-6 w-6 text-gold transition-transform group-hover:-translate-y-0.5 sm:h-8 sm:w-8" strokeWidth={1.4} aria-hidden="true" />
+                <span className="mt-2 text-[10px] font-semibold uppercase tracking-[0.14em] sm:mt-3 sm:text-xs">{label}</span>
+                <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-gold sm:text-[11px]">Shop now <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" /></span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      {topCategories.length ? (
-        <section className="container-page py-16">
-          <SectionHeading eyebrow="Explore" title="Shop by category" href="/shop" linkLabel="Shop all" />
-          <ul className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {topCategories.map((category) => (
-              <li key={category.id}>
-                <Link href={`/category/${category.slug}`} className="group block">
-                  <div className="relative aspect-square overflow-hidden rounded-[var(--radius-card)] bg-ivory">
-                    {category.imageUrl ? (
-                      <Image
-                        src={category.imageUrl}
-                        alt=""
-                        fill
-                        sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : null}
-                  </div>
-                  <p className="mt-3 flex items-center justify-between font-medium">
-                    {category.name}
-                    <ArrowRight className="h-4 w-4 text-gold-dark transition-transform group-hover:translate-x-1" aria-hidden="true" />
-                  </p>
-                </Link>
+      {promoBanners.length ? (
+        <section className="container-page pb-16" aria-label="Featured collections">
+          <SectionHeading eyebrow="Featured collections" title="The AKR collection" href="/shop" linkLabel="Explore all" />
+          <ul className="grid gap-2 md:grid-cols-5">
+            {promoBanners.slice(0, 2).map((banner, index) => (
+              <li key={banner.id} className={index === 0 ? "md:col-span-3" : "md:col-span-2"}>
+                <PromoTile banner={banner} featured={index === 0} />
               </li>
             ))}
           </ul>
@@ -140,18 +126,6 @@ export default async function HomePage() {
           <div className="mt-8">
             <ProductGrid products={featured} />
           </div>
-        </section>
-      ) : null}
-
-      {promoBanners.length ? (
-        <section className="container-page pb-16" aria-label="Promotions">
-          <ul className="grid gap-4 md:grid-cols-3">
-            {promoBanners.slice(0, 3).map((banner) => (
-              <li key={banner.id}>
-                <PromoTile banner={banner} />
-              </li>
-            ))}
-          </ul>
         </section>
       ) : null}
 
@@ -174,7 +148,7 @@ export default async function HomePage() {
         <section className="container-page pb-16">
           <SectionHeading eyebrow="Customer favourites" title={homepage.bestSellersTitle || "Best sellers"} href="/shop?sort=popular" linkLabel="View all" />
           <div className="mt-8">
-            <ProductGrid products={bestSellers} />
+            <ProductGrid products={bestSellers.slice(0, 6)} sixColumns />
           </div>
         </section>
       ) : null}
@@ -193,6 +167,25 @@ export default async function HomePage() {
               ))}
             </ul>
           </div>
+        </section>
+      ) : null}
+
+      {homepage.trustPoints.length ? (
+        <section aria-label="Why shop with us" className="theme-light border-t border-ivory/15 bg-ink text-ivory">
+          <ul className="container-page grid grid-cols-2 gap-6 py-8 lg:grid-cols-4">
+            {homepage.trustPoints.map((point, index) => {
+              const Icon = TRUST_ICONS[index % TRUST_ICONS.length]!;
+              return (
+                <li key={point.title} className="flex items-start gap-3">
+                  <Icon className="mt-0.5 h-6 w-6 shrink-0 text-gold" aria-hidden="true" />
+                  <div>
+                    <p className="text-sm font-semibold text-ivory">{point.title}</p>
+                    <p className="mt-0.5 text-xs leading-5 text-ivory/60">{point.text}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       ) : null}
     </>
@@ -215,9 +208,9 @@ function SectionHeading({ eyebrow, title, href, linkLabel }: { eyebrow: string; 
 
 type BannerData = { id: string; title: string; subtitle: string | null; imageUrl: string; linkUrl: string | null; ctaLabel: string | null };
 
-function PromoTile({ banner }: { banner: BannerData }) {
+function PromoTile({ banner, featured }: { banner: BannerData; featured: boolean }) {
   const content = (
-    <div className="theme-light group relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] bg-ink">
+    <div className={`theme-light group relative overflow-hidden bg-ink ${featured ? "aspect-[4/3] md:aspect-[3/1]" : "aspect-[4/3] md:aspect-[2/1]"}`}>
       <Image src={banner.imageUrl} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 p-6 text-ivory">
@@ -236,7 +229,7 @@ function PromoTile({ banner }: { banner: BannerData }) {
 
 function StripBanner({ banner }: { banner: BannerData }) {
   return (
-    <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-ivory">
+    <div className="relative min-h-[260px] overflow-hidden bg-ivory sm:min-h-[320px]">
       <Image src={banner.imageUrl} alt="" fill sizes="100vw" className="object-cover" />
       <div className="relative flex flex-col gap-4 p-8 sm:flex-row sm:items-center sm:justify-between sm:p-12">
         <div>

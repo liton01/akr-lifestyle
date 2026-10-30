@@ -35,12 +35,12 @@ function useStoreTheme(initial: Theme): Theme {
 }
 
 /** Round header button: a moon in light mode, a sun in dark mode. */
-export function ThemeToggle({ initial, className }: { initial: Theme; className?: string }) {
+export function ThemeToggle({ initial, className, dark: darkHeader = false }: { initial: Theme; className?: string; dark?: boolean }) {
   const dark = useStoreTheme(initial) === "dark";
   const label = dark ? "Switch to light mode" : "Switch to dark mode";
   return (
     <button type="button" onClick={() => setStoreTheme(dark ? "light" : "dark")} className={cn("group", className)} aria-label={label} title={label}>
-      <HeaderActionIcon>{dark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}</HeaderActionIcon>
+      <HeaderActionIcon dark={darkHeader}>{dark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}</HeaderActionIcon>
     </button>
   );
 }

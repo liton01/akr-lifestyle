@@ -22,7 +22,7 @@ export function StickyHeader({ children }: { children: ReactNode }) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 bg-white/95 backdrop-blur transition-shadow duration-300 supports-[backdrop-filter]:bg-white/90",
+        "theme-light sticky top-0 z-40 bg-ink text-ivory backdrop-blur transition-shadow duration-300 supports-[backdrop-filter]:bg-ink/95",
         scrolled && "shadow-[0_12px_32px_-20px_rgb(23_23_23/0.45)]",
       )}
     >
@@ -204,7 +204,7 @@ export function AccountMenu({ name, isStaff }: { name: string; isStaff: boolean 
   return (
     <details ref={ref} className="group relative">
       <summary className="flex cursor-pointer list-none items-center gap-2.5 [&::-webkit-details-marker]:hidden" aria-label="Account menu">
-        <HeaderActionIcon>
+        <HeaderActionIcon dark>
           <User className="h-[18px] w-[18px]" />
         </HeaderActionIcon>
         <HeaderActionText
@@ -215,6 +215,7 @@ export function AccountMenu({ name, isStaff }: { name: string; isStaff: boolean 
               <ChevronDown className="h-3.5 w-3.5 text-muted transition-transform group-open:rotate-180" aria-hidden="true" />
             </span>
           }
+          dark
         />
       </summary>
       <div className="card absolute right-0 top-full z-50 mt-3 w-60 overflow-hidden">

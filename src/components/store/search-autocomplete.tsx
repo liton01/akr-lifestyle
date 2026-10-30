@@ -30,7 +30,7 @@ function highlight(text: string, query: string): ReactNode {
  * products; arrow keys move through them, Enter opens the highlighted product (or the full
  * results page), Escape closes. Without JavaScript it is a normal GET form to /search.
  */
-export function SearchAutocomplete({ placeholder = "Search watches, earbuds, rings…", className }: { placeholder?: string; className?: string }) {
+export function SearchAutocomplete({ placeholder = "Search products, brands…", className, dark = false }: { placeholder?: string; className?: string; dark?: boolean }) {
   const router = useRouter();
   const inputId = useId();
   const listId = useId();
@@ -120,7 +120,7 @@ export function SearchAutocomplete({ placeholder = "Search watches, earbuds, rin
         Search products
       </label>
       <div className="relative">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gold-dark" aria-hidden="true" />
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gold" aria-hidden="true" />
         <input
           id={inputId}
           name="q"
@@ -144,14 +144,15 @@ export function SearchAutocomplete({ placeholder = "Search watches, earbuds, rin
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={onKeyDown}
-          className="h-11 w-full rounded-full border border-line bg-ivory/60 pl-11 pr-32 text-sm shadow-[inset_0_1px_2px_rgb(23_23_23/0.04)] transition placeholder:text-muted/80 hover:border-gold/60 focus:border-gold focus:bg-white focus:outline-none focus:ring-4 focus:ring-gold/15 lg:h-12 [&::-webkit-search-cancel-button]:hidden"
+          className={cn("h-11 w-full rounded-full border pl-11 pr-12 text-sm transition placeholder:text-muted/80 focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/15 lg:h-12 [&::-webkit-search-cancel-button]:hidden", dark ? "border-gold/45 bg-ink/90 text-ivory placeholder:text-ivory/50 hover:border-gold focus:bg-ink" : "border-line bg-ivory/60 text-ink shadow-[inset_0_1px_2px_rgb(23_23_23/0.04)] hover:border-gold/60 focus:bg-white lg:pr-32")}
         />
         {loading ? <Spinner className="absolute right-[6.5rem] top-1/2 -translate-y-1/2 text-gold-dark" /> : null}
         <button
           type="submit"
-          className="absolute right-1 top-1/2 inline-flex h-9 -translate-y-1/2 items-center rounded-full bg-ink px-5 text-sm font-medium text-ivory transition-colors hover:bg-ink-soft hover:text-gold-light lg:h-10"
+          aria-label={dark ? "Search products" : undefined}
+          className={cn("absolute right-1 top-1/2 inline-flex h-9 -translate-y-1/2 items-center rounded-full px-4 text-sm font-semibold transition-colors hover:brightness-110 lg:h-10", dark ? "bg-gold text-onyx lg:h-8 lg:w-8 lg:justify-center lg:p-0" : "bg-ink px-5 text-ivory hover:bg-ink-soft hover:text-gold-light")}
         >
-          Search
+          {dark ? <Search className="h-4 w-4" aria-hidden="true" /> : "Search"}
         </button>
       </div>
 

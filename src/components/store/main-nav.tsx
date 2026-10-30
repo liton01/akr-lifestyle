@@ -9,7 +9,7 @@ import type { NavCategory } from "./header";
 
 /** Category links: uppercase and letter-spaced on wide screens, with a gold underline that draws in on hover. */
 const navLinkClass =
-  "relative inline-flex items-center gap-1 whitespace-nowrap py-1 font-medium text-charcoal transition-colors hover:text-ink xl:text-[13px] xl:uppercase xl:tracking-[0.1em] " +
+  "relative inline-flex items-center gap-1 whitespace-nowrap py-1 font-medium text-ivory/75 transition-colors hover:text-gold xl:text-[13px] xl:uppercase xl:tracking-[0.1em] " +
   "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-[1.5px] after:origin-left after:scale-x-0 after:bg-gold after:transition-transform after:duration-300 " +
   "hover:after:scale-x-100 focus-visible:after:scale-x-100";
 
@@ -27,11 +27,11 @@ export function MainNav({ nav }: { nav: NavCategory[] }) {
   const close = () => setOpenState(null);
 
   return (
-    <nav aria-label="Main" className="relative hidden border-t border-line/60 lg:block">
+    <nav aria-label="Main" className="relative hidden border-t border-ivory/10 bg-ink lg:block">
       <ul className="container-page flex h-12 items-center gap-5 text-sm xl:gap-7">
         {/* "Shop all" leads the bar in the same type as the categories, set apart by a gold diamond and a hairline. */}
         <li className="flex h-full items-center border-r border-line pr-5 xl:pr-7">
-          <Link href="/shop" className={cn(navLinkClass, "gap-2.5 font-semibold text-ink")}>
+          <Link href="/shop" className={cn(navLinkClass, "gap-2.5 font-semibold text-ivory") }>
             <span className="h-[7px] w-[7px] rotate-45 bg-gradient-to-br from-gold-light to-gold-dark" aria-hidden="true" />
             Shop all
           </Link>
@@ -67,7 +67,7 @@ export function MainNav({ nav }: { nav: NavCategory[] }) {
             >
               <Link
                 href={`/category/${category.slug}`}
-                className={cn(navLinkClass, isOpen && "text-ink after:scale-x-100")}
+                className={cn(navLinkClass, isOpen && "text-gold after:scale-x-100")}
                 aria-haspopup={hasPanel ? "true" : undefined}
                 aria-expanded={hasPanel ? isOpen : undefined}
               >
@@ -109,17 +109,17 @@ function MegaPanel({ category, open }: { category: NavCategory; open: boolean })
         open ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible translate-y-1 opacity-0",
       )}
     >
-      <div className="border-y border-line bg-white shadow-[0_24px_48px_-24px_rgb(23_23_23/0.28)]">
+      <div className="border-y border-ivory/10 bg-ink text-ivory shadow-[0_24px_48px_-24px_rgb(23_23_23/0.65)]">
         <div className="container-page grid grid-cols-12 gap-8 py-8">
           <div className="col-span-3">
             <p className="eyebrow">Collection</p>
-            <p className="mt-2 font-display text-3xl font-semibold leading-tight text-ink">{category.name}</p>
-            <p className="mt-2 text-sm leading-6 text-muted">
+            <p className="mt-2 font-display text-3xl font-semibold leading-tight text-ivory">{category.name}</p>
+            <p className="mt-2 text-sm leading-6 text-ivory/60">
               Browse {count} {count === 1 ? "range" : "ranges"} in {category.name.toLowerCase()}.
             </p>
             <Link
               href={`/category/${category.slug}`}
-              className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-gold-deep transition-colors hover:text-ink"
+              className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-gold transition-colors hover:text-gold-light"
             >
               View all {category.name}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -130,7 +130,7 @@ function MegaPanel({ category, open }: { category: NavCategory; open: boolean })
               <li key={child.slug}>
                 <Link
                   href={`/category/${child.slug}`}
-                  className="group/link flex items-center justify-between rounded-lg px-3 py-2.5 text-[15px] text-charcoal transition-colors hover:bg-ivory hover:text-ink"
+                  className="group/link flex items-center justify-between rounded-lg px-3 py-2.5 text-[15px] text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory"
                 >
                   {child.name}
                   <ArrowRight
